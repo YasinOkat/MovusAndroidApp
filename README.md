@@ -21,15 +21,15 @@ To run the app on your local machine, follow these steps:
 # Screenshots
 
 <p align="center">
-  <img src="screenshots/login_page_dark.jpg" alt="Login Page" width="300">
-  <img src="screenshots/main_menu_dark.jpg" alt="Main Menu" width="300">
+  <img src="screenshots/LoginPage.jpeg" alt="Login Page" width="300">
+  <img src="screenshots/MainMenu.jpeg" alt="Main Menu" width="300">
 </p>
 <p align="center">
-  <img src="screenshots/araba_al_dark.png" alt="Araba Al" width="300">
-  <img src="screenshots/araba_birak_dark.jpg" alt="Araba Birak" width="300">
+  <img src="screenshots/TakeCar.jpeg" alt="Araba Al" width="300">
+  <img src="screenshots/ReturnCar.jpeg" alt="Araba Birak" width="300">
 </p>
 <p align="center">
-  <img src="screenshots/araba_liste_dark.jpg" alt="Araba Liste" width="300">
+  <img src="screenshots/CarList.jpeg" alt="Araba Liste" width="300">
 </p>
 
 
