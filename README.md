@@ -8,6 +8,7 @@ Movus Android App is a logistics management application developed using Java, Re
    2. Real-time Car Availability: Fetches the list of available cars from a remote server to ensure up-to-date information.
    3. Integration with Backend: Communicates with a backend server via Retrofit to fetch car data, insert rental information, and delete car records.
    4. User-friendly Interface: Utilizes spinners, text inputs, and dialog boxes to guide users and provide feedback on their actions.
+   5. Maps API. The app uses Google Places and Maps API to track location of the users.
 
 # Getting Started
 
