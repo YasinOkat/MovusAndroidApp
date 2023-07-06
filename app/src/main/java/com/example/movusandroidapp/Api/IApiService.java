@@ -24,4 +24,7 @@ public interface IApiService {
     @POST("/returnCar")
     Call<ReturnCarResponse> returnCar(@Body ReturnCarBody returnCarBody);
 
+    @POST("/updateLocation")
+    Call<UpdateLocationResponse> updateLocation(@Body UpdateLocationBody updateLocationBody);
+
 }

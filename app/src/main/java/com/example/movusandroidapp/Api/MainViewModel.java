@@ -146,6 +146,28 @@ public class MainViewModel extends ViewModel {
         });
     }
 
+    public void updateLocation(double longitude, double latitude, String used_car, MainRepository.IResponseCallback callback) {
+        mProgressMutableData.postValue(View.VISIBLE);
+
+        UpdateLocationBody updateLocationBody = new UpdateLocationBody(longitude, latitude, used_car);
+        mMainRepository.updateLocation(updateLocationBody, new MainRepository.IUpdateLocationResponse() {
+            @Override
+            public void onResponse(UpdateLocationResponse updateLocationResponse) {
+                mProgressMutableData.postValue(View.INVISIBLE);
+                if (updateLocationResponse.isSuccess()) {
+                    callback.onResponse("Araba başarıyla alındı");
+                } else {
+                    callback.onFailure("Bir hata oluştu");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mProgressMutableData.postValue(View.INVISIBLE);
+                callback.onFailure("Bir hata oluştu: " + t.getLocalizedMessage());
+            }
+        });
+    }
 
 
 }

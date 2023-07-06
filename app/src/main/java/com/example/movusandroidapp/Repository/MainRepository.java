@@ -12,6 +12,8 @@ import com.example.movusandroidapp.Api.ReturnCarBody;
 import com.example.movusandroidapp.Api.ReturnCarResponse;
 import com.example.movusandroidapp.Api.TakeCarBody;
 import com.example.movusandroidapp.Api.TakeCarResponse;
+import com.example.movusandroidapp.Api.UpdateLocationBody;
+import com.example.movusandroidapp.Api.UpdateLocationResponse;
 
 import java.util.List;
 
@@ -133,7 +135,33 @@ public class MainRepository {
         });
     }
 
+    public void updateLocation(UpdateLocationBody updateLocationBody, IUpdateLocationResponse updateLocationResponse) {
+        IApiService apiService = RetrofitClientInstance.getInstance().create(IApiService.class);
+        Call<UpdateLocationResponse> call = apiService.updateLocation(updateLocationBody);
 
+        call.enqueue(new Callback<UpdateLocationResponse>() {
+            @Override
+            public void onResponse(Call<UpdateLocationResponse> call, Response<UpdateLocationResponse> response) {
+                if (response.isSuccessful()) {
+                    updateLocationResponse.onResponse(response.body());
+                } else {
+                    updateLocationResponse.onFailure(new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateLocationResponse> call, Throwable t) {
+                updateLocationResponse.onFailure(t);
+            }
+        });
+    }
+
+
+    public interface IUpdateLocationResponse {
+        void onResponse(UpdateLocationResponse updateLocationResponse);
+
+        void onFailure(Throwable throwable);
+    }
 
     public interface ITakeCarResponse {
         void onResponse(TakeCarResponse takeCarResponse);

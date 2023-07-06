@@ -1,15 +1,23 @@
 package com.example.movusandroidapp.Activities;
 
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.location.LocationManager;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -17,6 +25,8 @@ import android.widget.Toast;
 
 import com.example.movusandroidapp.Api.GetCarsResponse;
 import com.example.movusandroidapp.Api.MainViewModel;
+import com.example.movusandroidapp.Constants;
+import com.example.movusandroidapp.Location.LocationService;
 import com.example.movusandroidapp.R;
 import com.example.movusandroidapp.Repository.MainRepository;
 import com.example.movusandroidapp.Utils.ButtonAnimation;
@@ -33,8 +43,8 @@ public class TakeCarActivity extends AppCompatActivity implements MainRepository
     private String username;
     private String destination;
     private String purpose;
-    private Double longitude;
-    private Double latitude;
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+
     MainViewModel mViewModel;
 
     @Override
@@ -100,8 +110,6 @@ public class TakeCarActivity extends AppCompatActivity implements MainRepository
 
                 destination = String.valueOf(binding.etDestination.getText());
                 purpose = String.valueOf(binding.etPurpose.getText());
-                longitude = 36.0;
-                latitude = 35.0;
 
                 mViewModel.getCars();
                 boolean carExists = false;
@@ -112,6 +120,9 @@ public class TakeCarActivity extends AppCompatActivity implements MainRepository
                     }
                 }
 
+                double longitude = 20.0;
+                double latitude = 20.0;
+
                 if (!carExists) {
                     Toast.makeText(TakeCarActivity.this, "Arabayı senden önce başka biri almış", Toast.LENGTH_SHORT).show();
                     binding.btnTakeTheCar.setEnabled(true);
@@ -120,9 +131,20 @@ public class TakeCarActivity extends AppCompatActivity implements MainRepository
                     Toast.makeText(TakeCarActivity.this, "Lütfen hedef ve amaç giriniz", Toast.LENGTH_SHORT).show();
                     binding.btnTakeTheCar.setEnabled(true);
                 }
+                else if(ContextCompat.checkSelfPermission(
+                        getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(
+                            TakeCarActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            REQUEST_CODE_LOCATION_PERMISSION
+                    );
+                }
                 else {
-                    mViewModel.takeCar(selectedCar, username, destination, purpose, longitude, latitude, TakeCarActivity.this);
+                    startLocationService();
                     showDialogAndFinish("Çıkış yapıldı.");
+
+                    mViewModel.takeCar(selectedCar, username, destination, purpose, longitude, latitude, TakeCarActivity.this);
                     binding.btnTakeTheCar.setEnabled(true);
                 }
             }
@@ -146,5 +168,48 @@ public class TakeCarActivity extends AppCompatActivity implements MainRepository
     @Override
     public void onFailure(String error) {
 
+    }
+
+    public void onRequestPermissionsResult(int resultCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(resultCode, permissions, grantResults);
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            startLocationService();
+        }
+        else{
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isLocationServiceRunning(){
+        ActivityManager activityManager =
+                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if(activityManager != null){
+            for(ActivityManager.RunningServiceInfo service :
+                    activityManager.getRunningServices(Integer.MAX_VALUE)){
+                if(LocationService.class.getName().equals(service.service.getClassName())){
+                    if(service.foreground){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private void startLocationService() {
+        if (!isLocationServiceRunning()) {
+            Intent intent = new Intent(getApplicationContext(), LocationService.class);
+            intent.putExtra("used_car", spinnerCars.getSelectedItem().toString());
+            intent.putExtra("viewModelIdentifier", MainViewModel.class.getName());
+            intent.setAction(Constants.ACTION_START_LOCATION_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ContextCompat.startForegroundService(this, intent);
+            } else {
+                startService(intent);
+            }
+            Toast.makeText(this, "Location service started", Toast.LENGTH_LONG).show();
+        }
     }
 }
