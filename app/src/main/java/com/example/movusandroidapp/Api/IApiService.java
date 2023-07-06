@@ -5,7 +5,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface IApiService {
 
@@ -26,5 +28,10 @@ public interface IApiService {
 
     @POST("/updateLocation")
     Call<UpdateLocationResponse> updateLocation(@Body UpdateLocationBody updateLocationBody);
+
+    @POST("/getLocation")
+    Call<List<GetLocationResponse>> getLocation(@Body GetLocationBody getLocationBody);
+
+
 
 }

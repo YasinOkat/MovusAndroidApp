@@ -1,8 +1,10 @@
 package com.example.movusandroidapp.Api;
 
+import android.view.View;
+
 import com.google.gson.annotations.SerializedName;
 
-public class GetUsedCarsResponse {
+public class GetUsedCarsResponse  {
 
     @SerializedName("UsedPlate")
     private String plate;

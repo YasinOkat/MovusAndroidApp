@@ -3,6 +3,8 @@ package com.example.movusandroidapp.Repository;
 import android.location.Location;
 
 import com.example.movusandroidapp.Api.GetCarsResponse;
+import com.example.movusandroidapp.Api.GetLocationBody;
+import com.example.movusandroidapp.Api.GetLocationResponse;
 import com.example.movusandroidapp.Api.GetUsedCarsResponse;
 import com.example.movusandroidapp.Api.IApiService;
 import com.example.movusandroidapp.Api.LoginBody;
@@ -72,6 +74,9 @@ public class MainRepository {
         });
     }
 
+
+
+
     public void getUsedCars(IGetUsedCarsResponse getUsedCarsResponse){
         IApiService apiService = RetrofitClientInstance.getInstance().create(IApiService.class);
         Call<List<GetUsedCarsResponse>> performGetUsedCars = apiService.getUsedCars();
@@ -89,6 +94,26 @@ public class MainRepository {
             @Override
             public void onFailure(Call<List<GetUsedCarsResponse>> call, Throwable t) {
                 getUsedCarsResponse.onFailure(t);
+            }
+        });
+    }
+
+    public void getLocation(GetLocationBody getLocationBody, IGetLocationResponse getLocationResponse) {
+        IApiService apiService = RetrofitClientInstance.getInstance().create(IApiService.class);
+        Call<List<GetLocationResponse>> call = apiService.getLocation(getLocationBody);
+        call.enqueue(new Callback<List<GetLocationResponse>>() {
+            @Override
+            public void onResponse(Call<List<GetLocationResponse>> call, Response<List<GetLocationResponse>> response) {
+                if (response.isSuccessful()){
+                    getLocationResponse.onResponse(response.body());
+                } else {
+                    getLocationResponse.onFailure(new Throwable(response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GetLocationResponse>> call, Throwable t) {
+                getLocationResponse.onFailure(t);
             }
         });
     }
@@ -157,6 +182,8 @@ public class MainRepository {
     }
 
 
+
+
     public interface IUpdateLocationResponse {
         void onResponse(UpdateLocationResponse updateLocationResponse);
 
@@ -193,6 +220,11 @@ public class MainRepository {
     public interface IResponseCallback {
         void onResponse(String message);
         void onFailure(String error);
+    }
+
+    public interface IGetLocationResponse {
+        void onResponse(List<GetLocationResponse> getLocationResponse);
+        void onFailure(Throwable throwable);
     }
 
 

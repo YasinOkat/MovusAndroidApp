@@ -2,6 +2,7 @@ package com.example.movusandroidapp.Api;
 
 import android.view.View;
 
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,10 +18,20 @@ public class MainViewModel extends ViewModel {
     MutableLiveData<String> mDrinksMutableData = new MutableLiveData<>();
     MutableLiveData<String> mLoginResultMutableData = new MutableLiveData<>();
     MutableLiveData<List<GetCarsResponse>> mCarsListMutableData;
+    private MutableLiveData<Pair<String, String>> mGetLocationLiveData = new MutableLiveData<>();
 
     MutableLiveData<List<GetUsedCarsResponse>> mUsedCarsListMutableData;
+    MutableLiveData<List<GetLocationResponse>> mLocationMutableData;
 
     MainRepository mMainRepository;
+
+    public LiveData<Integer> getProgressLiveData() {
+        return mProgressMutableData;
+    }
+
+    public LiveData<Pair<String, String>> getGetLocationLiveData() {
+        return mGetLocationLiveData;
+    }
 
     public MainViewModel() {
         mProgressMutableData.postValue(View.INVISIBLE);
@@ -29,6 +40,7 @@ public class MainViewModel extends ViewModel {
         mMainRepository = new MainRepository();
         mCarsListMutableData = new MutableLiveData<>();
         mUsedCarsListMutableData = new MutableLiveData<>();
+        mLocationMutableData = new MutableLiveData<>();
     }
     public LiveData<String> getLoginResult(){
         return mLoginResultMutableData;
@@ -43,6 +55,10 @@ public class MainViewModel extends ViewModel {
 
     public LiveData<List<GetUsedCarsResponse>> getUsedCarsList(){
         return mUsedCarsListMutableData;
+    }
+
+    public LiveData<List<GetLocationResponse>> getLocationList(){
+        return mLocationMutableData;
     }
 
     public void login(String username, String password) {
@@ -84,6 +100,7 @@ public class MainViewModel extends ViewModel {
         });
     }
 
+
     public void getUsedCars() {
         mProgressMutableData.postValue(View.VISIBLE);
         mMainRepository.getUsedCars(new MainRepository.IGetUsedCarsResponse() {
@@ -96,6 +113,35 @@ public class MainViewModel extends ViewModel {
             @Override
             public void onFailure(Throwable t) {
                 mProgressMutableData.postValue(View.INVISIBLE);
+            }
+        });
+    }
+
+
+    public void getLocation(String plate) {
+        mProgressMutableData.postValue(View.VISIBLE);
+
+        GetLocationBody getLocationBody = new GetLocationBody(plate);
+
+        mMainRepository.getLocation(getLocationBody, new MainRepository.IGetLocationResponse() {
+            @Override
+            public void onResponse(List<GetLocationResponse> getLocationResponse) {
+                mProgressMutableData.postValue(View.INVISIBLE);
+                if (!getLocationResponse.isEmpty()) {
+                    GetLocationResponse location = getLocationResponse.get(0);
+                    String latitude = location.getLatitude();
+                    String longitude = location.getLongitude();
+                    // Pass the latitude and longitude to the MapsActivity
+                    mGetLocationLiveData.postValue(new Pair<>(latitude, longitude));
+                } else {
+                    // Handle the case when no location response is available
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mProgressMutableData.postValue(View.INVISIBLE);
+                // Handle the failure case
             }
         });
     }

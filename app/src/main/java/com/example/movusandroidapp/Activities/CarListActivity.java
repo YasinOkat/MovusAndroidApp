@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -40,16 +41,7 @@ public class CarListActivity extends AppCompatActivity implements MainRepository
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        binding.tbCarList.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
-        if (binding != null && binding.tbCarList.getNavigationIcon() != null) {
-            binding.tbCarList.getNavigationIcon().setTint(ContextCompat.getColor(this, R.color.white));
-        }
 
         carsList = new ArrayList<>();
         adapter = new UsedCarsAdapter(carsList);
@@ -57,6 +49,7 @@ public class CarListActivity extends AppCompatActivity implements MainRepository
 
         MainRepository repository = new MainRepository();
         repository.getUsedCars(this);
+
     }
 
     @Override

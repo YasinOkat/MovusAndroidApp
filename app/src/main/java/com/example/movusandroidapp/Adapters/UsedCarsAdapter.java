@@ -1,16 +1,23 @@
 package com.example.movusandroidapp.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.movusandroidapp.Activities.MainActivity;
+import com.example.movusandroidapp.Activities.MapsActivity;
+import com.example.movusandroidapp.Api.GetLocationResponse;
 import com.example.movusandroidapp.Api.GetUsedCarsResponse;
 import com.example.movusandroidapp.R;
+import com.example.movusandroidapp.Repository.MainRepository;
 
 import java.util.List;
 
@@ -32,8 +39,10 @@ public class UsedCarsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return new HeaderViewHolder(headerView);
         } else {
             View itemView = inflater.inflate(R.layout.item_used_cars, parent, false);
+
             return new ItemViewHolder(itemView);
         }
+
     }
 
     @Override
@@ -70,6 +79,7 @@ public class UsedCarsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView user;
         private TextView destination;
         private TextView time;
+        private Button btnViewOnMap;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +87,24 @@ public class UsedCarsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             user = itemView.findViewById(R.id.tvUsername);
             destination = itemView.findViewById(R.id.tvDestination);
             time = itemView.findViewById(R.id.tvTime);
+            btnViewOnMap = itemView.findViewById(R.id.btnViewOnMap);
+
+            btnViewOnMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        GetUsedCarsResponse car = carsList.get(position - 1); // Subtract 1 for the header view
+
+                        // Start the MapsActivity and pass the plate data
+                        Context context = itemView.getContext();
+                        Intent intent = new Intent(context, MapsActivity.class);
+                        intent.putExtra("plate", car.getPlate());
+                        context.startActivity(intent);
+                    }
+                }
+            });
+
         }
 
         public void bind(GetUsedCarsResponse car) {
