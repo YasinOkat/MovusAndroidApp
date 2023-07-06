@@ -31,6 +31,7 @@ To run the app on your local machine, follow these steps:
 </p>
 <p align="center">
   <img src="screenshots/CarList.jpeg" alt="Araba Liste" width="300">
+   <img src="screenshots/Maps.jpeg" alt="Haritalar" width="300">
 </p>
 
 
