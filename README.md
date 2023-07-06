@@ -53,9 +53,11 @@ The app interacts with the following API endpoints on the backend server:
 
     /login: Used for user authentication and returning login status.
     /getCars: Used to fetch the list of available cars.
-    /take_car: Used to take a car for a specific purpose and destination.
-    /return_car: Used to return a previously taken car.
+    /takeCar: Used to take a car for a specific purpose and destination.
+    /returnCar: Used to return a previously taken car.
     /getUsedCars: Used to fetch the lift of currently used cars.
+    /updateLocation: Used to constantly update the longitude and latitude in the database.
+    /getLocaiton: Used to constantly get the longitude and latitude in the database.
 
 # License
 
